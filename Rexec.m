@@ -19,7 +19,11 @@ if isfield(OPENR,'cmd')
         fprintf(fid,'%s\n',['.libPaths("',OPENR.myLibPath,'")']); % my own library
     end
     for i=1:length(OPENR.libraries)
+        fprintf(fid,'tryCatch({\n');
         fprintf(fid,'library(%s)\n',OPENR.libraries{i});
+        fprintf(fid,'},error=function(e) {\n');
+        fprintf(fid,'install.packages("%s")\n',OPENR.libraries{i});
+        fprintf(fid,'library(%s) })\n',OPENR.libraries{i});
     end
     
     fprintf(fid,'\n### Load data ###\n');
@@ -30,13 +34,13 @@ if isfield(OPENR,'cmd')
     fprintf(fid,'%s\n','data_Rpush <- readMat("Rpush.mat")');
     
     % if list, transform to data.frame
-    fprintf(fid,'%s\n','for (i in 1:length(data_Rpush)) {');
-    fprintf(fid,'%s\n','    if (is.list(data_Rpush[[i]])) { data_Rpush[[i]] <- drop(data_Rpush[[i]])');
-    fprintf(fid,'%s\n','        if (length(dim(data_Rpush[[i]]))>1) { ');
-    fprintf(fid,'%s\n','            data_Rpush[[i]] <- data.frame(data_Rpush[[i]]) } } }');
+%     fprintf(fid,'%s\n','for (i in 1:length(data_Rpush)) {');
+%     fprintf(fid,'%s\n','    if (is.list(data_Rpush[[i]])) { data_Rpush[[i]] <- drop(data_Rpush[[i]])');
+%     fprintf(fid,'%s\n','        if (length(dim(data_Rpush[[i]]))>1) { ');
+%     fprintf(fid,'%s\n','            data_Rpush[[i]] <- data.frame(data_Rpush[[i]]) } } }');
 
     fprintf(fid,'%s\n','attach(data_Rpush)');
-    fprintf(fid,'rm(i)\n');
+    %fprintf(fid,'rm(i)\n');
     
     fprintf(fid,'\n###  cmds  ###\n');    
     if any(contains(OPENR.cmd,'foreach'))

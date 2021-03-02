@@ -1,25 +1,17 @@
 
-Rinit('mice');
-
-% struct
-S = struct;
-S.LastName = {'Sanchez';'Johnson';'Li';'Diaz';'Brown'};
-S.BloodPressure = [124 93; 109 77; 125 83; 117 75; 122 80];
-% table
-LastName = {'San';'John';'L';'Di';'Bro'};
-Smoker = logical([1;0;1;0;1]);
-BloodPressure = [124 93; 109 NaN; 125 83; 117 75; 122 80];
-T = table(LastName,Smoker,BloodPressure);
-% cell array
-CA = [S.LastName,LastName];
-M = categorical(CA);
-
-Rpush('M',M,'S',S,'T',T,'CA',CA)
-Rrun('M2<-M')
-Rrun('S<-S')
-Rrun('CA<-CA')
-Rrun('T<-T')
-[T2,CA2,M2,S2] = Rpull('T','CA','M2','S');
+load arrhythmia
+design = [ones(size(Y,1),1) Y];
+Rinit({'limma','rrcovNA'});             % Define R packages
+Rpush('data',X','design',design)             % Data to use in R
+%Rrun('I <- impSeqRob(data)')            % Imputation
+%Rrun('data <- I$xseq')
+Rrun('fit <- lmFit(scale(data),design)')       % linear model
+Rrun('fite <- eBayes(fit)')             % empirical Bayes statistics
+Rrun('tiff("VolcanoArrythmia.tiff")')
+Rrun('volcanoplot(fite)')
+Rrun('dev.off()')
+Rrun('tiff("ClusterArrythmia.tiff")')
+Rrun('h <- heatmap(data,Rowv=NA,ColSideColors=rainbow(16)[cut(design[,2]),16)])')
+[h,fite] = Rpull('h','fite');
 
 Rclear
-  
