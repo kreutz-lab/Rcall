@@ -29,7 +29,8 @@ else
             [~,OPENR.Rexe]=system('which R');
         else
             [~,OPENR.Rexe]=system('where R.exe');
-            OPENR.Rexe = OPENR.Rexe(1:end-1);
+            OPENR.Rexe = sort(split(OPENR.Rexe,char(10)));
+            OPENR.Rexe = OPENR.Rexe{end};
         end
     else
         % Searches in standard windows/linux/cluster paths
