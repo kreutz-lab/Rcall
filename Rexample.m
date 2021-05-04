@@ -1,17 +1,19 @@
+t = cputime;
+Rinit({'limma'});             % Define R packages
+load arrhythmia; Y = [ones(size(Y,1),1) Y];
+Rpush('X',X','Y',Y)  
 
-load arrhythmia
-design = [ones(size(Y,1),1) Y];
-Rinit({'limma','rrcovNA'});             % Define R packages
-Rpush('data',X','design',design)             % Data to use in R
-%Rrun('I <- impSeqRob(data)')            % Imputation
-%Rrun('data <- I$xseq')
-Rrun('fit <- lmFit(scale(data),design)')       % linear model
-Rrun('fite <- eBayes(fit)')             % empirical Bayes statistics
-Rrun('tiff("VolcanoArrythmia.tiff")')
-Rrun('volcanoplot(fite)')
+% Define R commands
+Rrun('fit <- lmFit(scale(X),Y)')       		%# fit linear model
+Rrun('fite <- eBayes(fit)')											%# empirical Bayes statistics
+Rrun('tiff("VolcanoArrhythmia.tiff")')
+Rrun('volcanoplot(fite)')							%&& # log-fold changes vs log-odds
 Rrun('dev.off()')
-Rrun('tiff("ClusterArrythmia.tiff")')
-Rrun('h <- heatmap(data,Rowv=NA,ColSideColors=rainbow(16)[cut(design[,2]),16)])')
+Rrun('tiff("ClusterArrhythmia.tiff")')
+Rrun('h <- heatmap(X,Rowv=NA,ColSideColors=rainbow(16)[cut(Y[,2],16)])')
+
+% Evaluate R commands and get variables
 [h,fite] = Rpull('h','fite');
 
 Rclear
+cputime-t

@@ -48,6 +48,7 @@ for i=1:2:nargin
     end
     if iscategorical(val)
         val = cellstr(val);
+        %OPENR.cmd{end+1} = [valname ' <- factor(' valname ')']; % table -> data.frame (one can comment if list is prefered)
     end  
     if isdatetime(val) || isduration(val)
        val = char(val);
