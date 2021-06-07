@@ -45,7 +45,11 @@ fclose(fid);
 
 system(sprintf('%s CMD BATCH --vanilla --slave "%s%sRpull.R"',OPENR.Rexe,pwd,filesep));
 
-dat = load('Rpull.mat');
+try
+    dat = load('Rpull.mat');
+catch
+     warning('Is the R package installed? Try to run Rrun.R in R for error prouning.')
+end
     
 varargout = {};
 for i=1:length(varargin)
@@ -87,7 +91,11 @@ for i=1:length(varargin)
                     eval(sprintf('dat.%s = dat.(sf{s});',replace(sf{s},'_struct_','.')));
                 end
             end
-            varargout{i} = dat.(varargin{i});
+            if isfield(dat,[varargin{i} '_vartype']) && contains(dat.([varargin{i} '_vartype']),'tbl')
+                varargout{i} = struct2table(dat.(varargin{i}),'AsArray',true);
+            else
+                varargout{i} = dat.(varargin{i});
+            end
         end
     %% Take as is
     else
