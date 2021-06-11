@@ -2,7 +2,7 @@
 % 
 %   This function is used to push variables to the R-workspace
 % 
-%   varargin - variables of any type which to pass to R
+%   varname     the variable name used in R
 
 function Rpush(varargin)
 global OPENR
@@ -11,15 +11,15 @@ Rexec  % execute R commands if they are in the buffer
 
 OPENR.cmd = {};
 
-for i=1:nargin
-    
-    val = varargin{i};
-    name = inputname(i);
+for i=1:2:nargin
+
+    valname = varargin{i};
+    val = varargin{i+1};
     
     if ~isstruct(val) && ~isnumeric(val) && ~ischar(val) && ~islogical(val) && ~ischar(val) && ~istable(val) && ~iscell(val) && ~isa(val,'dataset') && ~iscategorical(val)
-        warning(['Rcall/Rpush.m: Data type of variable ' name ' unknown. May lead to problems converting to R.']);
+        warning(['Rcall/Rpush.m: Data type of variable ' valname ' unknown. May lead to problems converting to R.']);
     end
-    if ~ischar(name)
+    if ~ischar(valname)
         error('Rpush.m: Name-value pairs expected as input arguments.')
     end
     
@@ -33,28 +33,28 @@ for i=1:nargin
     if isa(val,'dataset')
         val = dataset2table(val);
         %val = dataset2struct(val);
-        %OPENR.cmd{end+1} = [name ' <- data.frame(' name ')']; % table -> data.frame (one can comment if list is prefered)
+        %OPENR.cmd{end+1} = [valname ' <- data.frame(' valname ')']; % table -> data.frame (one can comment if list is prefered)
     end
     if istable(val) || istimetable(val)
         f = fieldnames(val);
         for j=1:length(f)-3
             if isa(val.(f{j}),'nominal') 			% convert nominal to string
                 val.(f{j}) = cellstr(val.(f{j}));
-                OPENR.cmd{end+1} = [name '$' f{j} '<- factor(' name '$' f{j} ')']; % table -> data.frame (one can comment if list is prefered)
+                OPENR.cmd{end+1} = [valname '$' f{j} '<- factor(' valname '$' f{j} ')']; % table -> data.frame (one can comment if list is prefered)
             end
         end
         val = table2struct(val);
-        OPENR.cmd{end+1} = [name ' <- data.frame(' name ')']; % table -> data.frame (one can comment if list is prefered)
+        OPENR.cmd{end+1} = [valname ' <- data.frame(' valname ')']; % table -> data.frame (one can comment if list is prefered)
     end
     if iscategorical(val)
         val = cellstr(val);
-        %OPENR.cmd{end+1} = [name ' <- factor(' name ')']; % table -> data.frame (one can comment if list is prefered)
+        %OPENR.cmd{end+1} = [valname ' <- factor(' valname ')']; % table -> data.frame (one can comment if list is prefered)
     end  
     if isdatetime(val) || isduration(val)
        val = char(val);
     end
     if isa(val,'function_handle')
-        cmd = [val '<- eval(expression(' replace(replace(func2str(val),'@','function'),'.','') '))'];
+        cmd = [varargin{i} '<- eval(expression(' replace(replace(func2str(val),'@','function'),'.','') '))'];
         if ~isfield(OPENR,'cmd')
             OPENR.cmd = {cmd};
         else
@@ -65,8 +65,8 @@ for i=1:nargin
     
     %% Push
     ftmp = @(x)x;
-    evstr = sprintf('%s = feval(ftmp,val);',name);   
-    evstr2 = sprintf('save(''Rpush.mat'',''%s'',''-append'');',name);
+    evstr = sprintf('%s = feval(ftmp,val);',valname);   
+    evstr2 = sprintf('save(''Rpush.mat'',''%s'',''-append'');',valname);
     eval(evstr);
     eval(evstr2);
 end

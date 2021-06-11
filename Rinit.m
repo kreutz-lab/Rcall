@@ -4,7 +4,6 @@
 % 
 %   The path to the R executable is set automatically or can be specified
 %   by the user:
-% libraries - cell strings of the R package names which to attach (alternatively the R packages can be defined in Rrun(‘library(Rpackage)’))
 % path      - path to the executable R.exe
 % libpath   - path to the R libraries
 % 
