@@ -30,7 +30,7 @@ else
         else
             [~,OPENR.Rexe]=system('where R.exe');
             if strncmpi(OPENR.Rexe,'information',11)
-                warning('The system call "where R.exe" did not work on your system. Try adding the R path in your system environment variables.')
+                warning('"R.exe" has not be found. Try adding the R path to the system environment variables.')
             end
             OPENR.Rexe = sort(split(OPENR.Rexe,char(10)));
             OPENR.Rexe = OPENR.Rexe{end};

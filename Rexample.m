@@ -1,19 +1,27 @@
-t = cputime;
-Rinit({'limma'});             % Define R packages
-load arrhythmia; Y = [ones(size(Y,1),1) Y];
-Rpush('X',X','Y',Y)  
+% Initialize Rcall
+Rinit('limma')
+
+% Pass test data to R
+load('TestData.mat')
+Rpush('dat',dat,'grp',grp)
 
 % Define R commands
-Rrun('fit <- lmFit(scale(X),Y)')       		%# fit linear model
-Rrun('fite <- eBayes(fit)')											%# empirical Bayes statistics
-Rrun('tiff("VolcanoArrhythmia.tiff")')
-Rrun('volcanoplot(fite)')							%&& # log-fold changes vs log-odds
+Rrun('fit <- lmFit(dat,design=model.matrix(~1+grp))')       		%# fit linear model
+Rrun('fitBay <- eBayes(fit)')											%# empirical Bayes statistics
+Rrun('p <- fitBay$p.value')
+Rrun('pdf("Volcano.pdf", pointsize=18,compress=FALSE)')
+Rrun('volcanoplot(fitBay,coef=2,highlight=2)')							%&& # log-fold changes vs log-odds
 Rrun('dev.off()')
-Rrun('tiff("ClusterArrhythmia.tiff")')
-Rrun('h <- heatmap(X,Rowv=NA,ColSideColors=rainbow(16)[cut(Y[,2],16)])')
 
 % Evaluate R commands and get variables
-[h,fite] = Rpull('h','fite');
+[fitM, p] = Rpull('fit','p');
 
+% 2nd example: Cluster analysis
+Rrun('tiff("ClusterArrhythmia.tiff")')
+Rrun('h <- heatmap(dat,row=NA)')
+Rrun('cl <- h$colInd')
+Rrun('dev.off()')
+cl = Rpull('cl');
+
+% Clear all temporary variables and files
 Rclear
-cputime-t
