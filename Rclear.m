@@ -1,3 +1,7 @@
+% Rclear
+%
+% All temporary variables and files which were created by Rcall are deleted
+
 function Rclear
 warning('off','MATLAB:DELETE:FileNotFound');
 % try

@@ -4,16 +4,17 @@
 % 
 %   The path to the R executable is set automatically or can be specified
 %   by the user:
+% libraries - cell or string of the R package names which to attach (alternatively the R packages can be defined in Rrun(‘library(Rpackage)’))
 % path      - path to the executable R.exe
 % libpath   - path to the R libraries
 % 
 % Example:
 %   path = '/usr/local/lib/R/bin/R.exe';
 %   libpath = '~/R_library';
-%   Rinit(path,libpath)
-%   evalR('dat <- c(5,5,5)')
-%   dat = getRdata('dat');
-%   closeR
+%   Rinit([],path,libpath)
+%   Rrun('dat <- c(5,5,5)')
+%   dat = Rpull('dat');
+%   Rclear
 
 function Rinit(libraries,path,libpath)
 

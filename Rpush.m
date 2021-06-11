@@ -1,8 +1,9 @@
-%   Rpush(varname,val)
+%   Rpush(valname,val,[valname,val,...])
 % 
 %   This function is used to push variables to the R-workspace
 % 
-%   varname     the variable name used in R
+%   valname     the variable name used in R
+%   val         the variable which is passed to R
 
 function Rpush(varargin)
 global OPENR
