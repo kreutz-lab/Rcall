@@ -10,9 +10,9 @@ Add the repository file path to your Matlab search path (e.g. by addpath.m)
 
 ```
 Rinit('limma')
-load arrhythmia; Y = [ones(size(Y,1),1) Y];
-Rpush('X',X','Y',Y) 
-Rrun('fit <- lmFit(scale(X),Y)') 
+load('TestData.mat')
+Rpush('dat',dat,'grp',grp) 
+Rrun('fit <- lmFit(dat,grp)') 
 fit = Rpull('fit');
 Rclear
 ```
