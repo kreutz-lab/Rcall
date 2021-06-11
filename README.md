@@ -3,6 +3,7 @@ R function interface for Matlab. See also the [Rcall wiki](https://github.com/kr
 
 ## Installation
 Clone or download the repository.
+
 Add the repository file path to your Matlab search path by addpath.m or by Home -> Set Path -> Add Folder.
 
 ## Short Example
