@@ -16,4 +16,5 @@ Rrun('fit <- lmFit(dat,grp)')
 fit = Rpull('fit');
 Rclear
 ```
+Make sure the used R packages are installed beforehand.
 See also Rexample.m or the [Rcall wiki](https://github.com/kreutz-lab/Rcall/wiki).
