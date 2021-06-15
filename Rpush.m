@@ -13,9 +13,14 @@ Rexec  % execute R commands if they are in the buffer
 OPENR.cmd = {};
 
 for i=1:2:nargin
-
-    valname = varargin{i};
-    val = varargin{i+1};
+    
+    if nargin<2 % if only one input argument, take name of input variable
+        val = varargin{i};
+        valname = inputname(varargin{i});
+    else        % else string is variable name, second argument is varialbe
+        valname = varargin{i};
+        val = varargin{i+1};
+    end
     
     if ~isstruct(val) && ~isnumeric(val) && ~ischar(val) && ~islogical(val) && ~ischar(val) && ~istable(val) && ~iscell(val) && ~isa(val,'dataset') && ~iscategorical(val)
         warning(['Rcall/Rpush.m: Data type of variable ' valname ' unknown. May lead to problems converting to R.']);
