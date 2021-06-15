@@ -22,24 +22,26 @@ global OPENR
 OPENR = struct;
 
 %% Set R path
-if exist('path','var')
+if exist('path','var') && ~isempty(path)
     OPENR.Rexe = path;
 else
-    if ispc
-        if isunix || ismac
-            [~,OPENR.Rexe]=system('which R');
-        else
-            [~,OPENR.Rexe]=system('where R.exe');
-            if strncmpi(OPENR.Rexe,'information',11)
-                warning('"R.exe" has not be found. Try adding the R path to the system environment variables.')
-            end
-            OPENR.Rexe = sort(split(OPENR.Rexe,char(10)));
-            OPENR.Rexe = OPENR.Rexe{end};
-        end
+    if isunix || ismac
+        [~,OPENR.Rexe]=system('which R');
     else
+        [~,OPENR.Rexe]=system('where R.exe');
+        if strncmpi(OPENR.Rexe,'information',11)
+            warning('"R.exe" has not be found. Try adding the R path to the system environment variables.')
+        end
+        if ~strcmp(OPENR.Rexe(1),'"')
+            OPENR.Rexe = ['"' OPENR.Rexe '"']; % to be excecutable via command line
+        end
+    end
+    if isempty(OPENR.Rexe)
         % Searches in standard windows/linux/cluster paths
         OPENR.Rexe = Rload;
     end
+    OPENR.Rexe = sort(split(OPENR.Rexe,char(10)));
+    OPENR.Rexe = OPENR.Rexe{end};
 end
 if ~isfield(OPENR,'Rexe') || isempty(OPENR.Rexe)
     error('Rcall/Rinit.m: Define your home directory of R in Rinit(Rlibraries,Rpath). You can find the directory by R.home() in R.')
@@ -54,9 +56,6 @@ end
 %         error(['Rinit.m: R path "' OPENR.Rexe '" not found. You can find the directory by R.home() in R.'])
 %     end
 % end
-if ~strcmp(OPENR.Rexe(1),'"')
-    OPENR.Rexe = ['"' OPENR.Rexe '"']; % to be excecutable via command line
-end
 
 %% Set library path
 if exist('libpath','var')
