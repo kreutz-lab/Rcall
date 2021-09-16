@@ -20,10 +20,16 @@ if isfield(OPENR,'cmd')
     end
     for i=1:length(OPENR.libraries)
         fprintf(fid,'tryCatch({\n');
-        fprintf(fid,'library(%s)\n',OPENR.libraries{i});
+        fprintf(fid,' library(%s)\n',OPENR.libraries{i});
         fprintf(fid,'},error=function(e) {\n');
-        fprintf(fid,'install.packages("%s")\n',OPENR.libraries{i});
-        fprintf(fid,'library(%s) })\n',OPENR.libraries{i});
+        fprintf(fid,' tryCatch({\n');
+        fprintf(fid,'  install.packages("%s")\n',OPENR.libraries{i});
+        fprintf(fid,'  library(%s)\n',OPENR.libraries{i});
+        fprintf(fid,' },error=function(e) {\n');
+        fprintf(fid,'  sink("Rerrorinstalltmp.txt")\n');
+        fprintf(fid,'  cat("Error in Rrun.R : Installation of package %s was not successfull. Do package installation in R beforehand.", conditionMessage(e))\n',OPENR.libraries{i});
+        fprintf(fid,'  sink()\n');
+        fprintf(fid,'})})\n');        
     end
     
     fprintf(fid,'\n### Load data ###\n');
@@ -66,10 +72,13 @@ if isfield(OPENR,'cmd')
     fprintf(fid,'%s\n','sink() })');
     fclose(fid);
     
-    cmd = sprintf('%s CMD BATCH --vanilla --slave "%s%sRrun.R"',OPENR.Rexe,pwd,filesep);
+    cmd = sprintf('"%s" CMD BATCH --vanilla --slave "%s%sRrun.R"',OPENR.Rexe,pwd,filesep);
     status = system(cmd);
     
     % show error messages in matlab command window
+    if exist([pwd filesep 'Rerrorinstalltmp.txt'],'file')
+        error(fileread([pwd filesep 'Rerrorinstalltmp.txt']))
+    end
     if exist([pwd filesep 'Rerrortmp.txt'],'file')
         error(fileread([pwd filesep 'Rerrortmp.txt']))
     end

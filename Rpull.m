@@ -43,7 +43,7 @@ fprintf(fid,'%s\n','expr <- paste(expr,'')'')');
 fprintf(fid,'%s\n','eval(parse(text=expr))');
 fclose(fid);
 
-system(sprintf('%s CMD BATCH --vanilla --slave "%s%sRpull.R"',OPENR.Rexe,pwd,filesep));
+system(sprintf('"%s" CMD BATCH --vanilla --slave "%s%sRpull.R"',OPENR.Rexe,pwd,filesep));
 
 try
     dat = load('Rpull.mat');
@@ -76,12 +76,12 @@ for i=1:length(varargin)
                     varargout{i}{row(j),col(j),page(j)} = dat.(sf{j});
                 end
         %% List to struct
-        elseif isfield(dat,[varargin{i} '_vartype']) && strcmp(dat.([varargin{i} '_vartype']),'data.frame')
-            temp = dat.(sf{1});
-            for j=2:length(sf)
-                temp = [temp dat.(sf{j})];
-            end
-            varargout{i} = struct2table(temp);
+%         elseif isfield(dat,[varargin{i} '_vartype']) && strcmp(dat.([varargin{i} '_vartype']),'data.frame')
+%             temp = dat.(sf{1});
+%             for j=2:length(sf)
+%                 temp = [temp dat.(sf{j})];
+%             end
+%             varargout{i} = struct2table(temp);
         else %if isfield(dat,[varargin{i} '_vartype']) && strcmp(dat.([varargin{i} '_vartype']),'list') && ~isempty(sf) 
             fn = fieldnames(dat);
             sfields = fn(contains(fn,varargin{i}) & contains(fn,'_subfields'));

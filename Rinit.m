@@ -32,9 +32,9 @@ else
         if strncmpi(OPENR.Rexe,'information',11)
             warning('"R.exe" has not be found. Try adding the R path to the system environment variables.')
         end
-        if ~strcmp(OPENR.Rexe(1),'"')
-            OPENR.Rexe = ['"' OPENR.Rexe '"']; % to be excecutable via command line
-        end
+%         if ~strcmp(OPENR.Rexe(1),'"')
+%             OPENR.Rexe = ['"' OPENR.Rexe '"']; % to be excecutable via command line
+%         end
     end
     if isempty(OPENR.Rexe)
         % Searches in standard windows/linux/cluster paths
