@@ -2,8 +2,17 @@
 % 
 %   This function is used to push variables to the R-workspace
 % 
-%   valname     the variable name used in R
-%   val         the variable which is passed to R
+%   varargin    the variable name used in R, the variable which is passed to R
+%
+%   Example:
+%   Rpush('dat',dat,'X',X)
+%   
+%   Larger Example:
+%   Rinit
+%   Rpush('dat',dat)
+%   Rrun('dat <- dat+1')
+%   dat = Rpull('dat')
+%   Rclear
 
 function Rpush(varargin)
 global OPENR

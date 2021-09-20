@@ -2,10 +2,11 @@
 %   The global variable "global OPENR" with paths to the R executable and 
 %   libraries is initialized and empty workspaces are created.
 % 
+% libraries - cell or string of the R package names which to attach (alternatively the R packages can be defined in Rrun(‘library(Rpackage)’))
 %   The path to the R executable is set automatically or can be specified
 %   by the user:
-% libraries - cell or string of the R package names which to attach (alternatively the R packages can be defined in Rrun(‘library(Rpackage)’))
 % path      - path to the executable R.exe
+% (The path to the R executable is set automatically or can be specified by the user)
 % libpath   - path to the R libraries
 % 
 % Example:
