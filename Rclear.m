@@ -18,6 +18,7 @@ warning('off','MATLAB:DELETE:FileNotFound');
     
     delete('Rpush.mat')
     delete('Rerrortmp.txt')
+    delete('Rerrorinstalltmp.txt')
     delete('Rwarn.txt')
 % end
 warning('on','MATLAB:DELETE:FileNotFound');

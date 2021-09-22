@@ -1,14 +1,14 @@
 % Initialize Rcall
-Rinit({'limma'})
+Rinit('limma')
 
 % Pass test data to R
-load pasilla_count_noMM.mat
+load('pasilla_count_noMM.mat')
 Rpush('dat',geneCountTable{:,3:6},'grp',[0;0;1;1])
 
 % Define R commands
+% Rread('Rapplication.R')
 %Rrun('dat <- dat[filterByExpr(dat,grp),]')
 %Rrun('dat <- dat*calcNormFactors(dat)')
-
 Rrun('dat <- voom(dat, grp)')
 Rrun('fit <- lmFit(dat,design=model.matrix(~1+grp))')       		%# fit linear model
 Rrun('fit <- eBayes(fit)')											%# empirical Bayes statistics

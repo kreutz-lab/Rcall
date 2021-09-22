@@ -23,11 +23,16 @@ if isfield(OPENR,'cmd')
         fprintf(fid,' library(%s)\n',OPENR.libraries{i});
         fprintf(fid,'},error=function(e) {\n');
         fprintf(fid,' tryCatch({\n');
-        fprintf(fid,'  install.packages("%s")\n',OPENR.libraries{i});
-        fprintf(fid,'  library(%s)\n',OPENR.libraries{i});
+        fprintf(fid,'  tryCatch({\n');
+        fprintf(fid,'   install.packages("%s", repos="http://cran.us.r-project.org")\n',OPENR.libraries{i});
+        fprintf(fid,'   library(%s)\n',OPENR.libraries{i});
+        fprintf(fid,'  },error=function(e) {\n');
+        fprintf(fid,'   BiocManager::install("%s")\n',OPENR.libraries{i});
+        fprintf(fid,'   library(%s)\n',OPENR.libraries{i});
+        fprintf(fid,'  })\n');   
         fprintf(fid,' },error=function(e) {\n');
         fprintf(fid,'  sink("Rerrorinstalltmp.txt")\n');
-        fprintf(fid,'  cat("Error in Rrun.R : Installation of package %s was not successfull. Do package installation in R beforehand.", conditionMessage(e))\n',OPENR.libraries{i});
+        fprintf(fid,'  cat("Error in Rrun.R : Installation of package %s was not successfull. Try package installation in R beforehand.", conditionMessage(e))\n',OPENR.libraries{i});
         fprintf(fid,'  sink()\n');
         fprintf(fid,'})})\n');        
     end
