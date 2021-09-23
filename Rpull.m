@@ -46,7 +46,7 @@ fclose(fid);
 [~,cmdout] = system(sprintf('"%s" CMD BATCH --vanilla --slave "%s%sRpull.R"',OPENR.Rexe,pwd,filesep));
 
 if ~isempty(cmdout)
-    if strcmp(cmdout,'The system cannot find the path specified.')
+    if contains(cmdout,'system cannot find the path specified')
         error([cmdout ' Is your R path ' OPENR.Rexe ' defined in the PATH environmental variable?'])
     end
     error(cmdout)
