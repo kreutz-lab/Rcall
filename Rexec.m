@@ -80,12 +80,12 @@ if isfield(OPENR,'cmd')
     cmd = sprintf('"%s" CMD BATCH --vanilla --slave "%s%sRrun.R"',OPENR.Rexe,pwd,filesep);
     [~,cmdout] = system(cmd);
     
-if ~isempty(cmdout)
-    if contains(cmdout,'system cannot find the path specified')
-        error([cmdout ' Is your R path ' OPENR.Rexe ' defined in the PATH environmental variable?'])
+    if ~isempty(cmdout)
+        if contains(cmdout,'system cannot find the path specified')
+            error([cmdout ' Is your R path ' OPENR.Rexe ' defined in the PATH environmental variable? Alternatively, set your R path in the Rinit(Rpackages,Rpath) function as second input argument.'])
+        end
+        error(cmdout)
     end
-    error(cmdout)
-end
     
     % show error messages in matlab command window
     if exist([pwd filesep 'Rerrorinstalltmp.txt'],'file')

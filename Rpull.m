@@ -47,7 +47,7 @@ fclose(fid);
 
 if ~isempty(cmdout)
     if contains(cmdout,'system cannot find the path specified')
-        error([cmdout ' Is your R path ' OPENR.Rexe ' defined in the PATH environmental variable?'])
+        error([cmdout ' Is your R path ' OPENR.Rexe ' defined in the PATH environmental variable? Alternatively, set your R path in Rinit(Rpackages,Rpath).'])
     end
     error(cmdout)
 end
