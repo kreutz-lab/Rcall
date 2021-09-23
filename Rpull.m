@@ -43,8 +43,14 @@ fprintf(fid,'%s\n','expr <- paste(expr,'')'')');
 fprintf(fid,'%s\n','eval(parse(text=expr))');
 fclose(fid);
 
-system(sprintf('"%s" CMD BATCH --vanilla --slave "%s%sRpull.R"',OPENR.Rexe,pwd,filesep));
+[~,cmdout] = system(sprintf('"%s" CMD BATCH --vanilla --slave "%s%sRpull.R"',OPENR.Rexe,pwd,filesep));
 
+if ~isempty(cmdout)
+    if strcmp(cmdout,'The system cannot find the path specified.')
+        error([cmdout ' Is your R path ' OPENR.Rexe ' defined in the PATH environmental variable?'])
+    end
+    error(cmdout)
+end
 try
     dat = load('Rpull.mat');
 catch
