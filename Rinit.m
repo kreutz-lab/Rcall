@@ -83,6 +83,6 @@ end
 save Rpush
 
 warning('off','MATLAB:DELETE:FileNotFound');
-delete('getRdata.mat')
+delete('Rpull.mat')
 warning('on','MATLAB:DELETE:FileNotFound');
 

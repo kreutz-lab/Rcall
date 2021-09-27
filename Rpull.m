@@ -43,13 +43,20 @@ fprintf(fid,'%s\n','expr <- paste(expr,'')'')');
 fprintf(fid,'%s\n','eval(parse(text=expr))');
 fclose(fid);
 
-[~,cmdout] = system(sprintf('"%s" CMD BATCH --vanilla --slave "%s%sRpull.R"',OPENR.Rexe,pwd,filesep));
+[status,cmdout] = system(sprintf('"%s" CMD BATCH --slave "%s%sRpull.R"',OPENR.Rexe,pwd,filesep));
 
 if ~isempty(cmdout)
     if contains(cmdout,'system cannot find the path specified')
-        error([cmdout ' Is your R path ' OPENR.Rexe ' defined in the PATH environmental variable? Alternatively, set your R path in Rinit(Rpackages,Rpath).'])
+        error([cmdout ' Is your R path ' OPENR.Rexe ' defined in the PATH environmental variable? Alternatively, set your R path in the Rinit(Rpackages,Rpath) function as second input argument.'])
     end
     error(cmdout)
+end
+if status~=0
+    if isfield(OPENR,'myLibPath')
+        error(sprintf(['Is your R path "' OPENR.Rexe '" correct? You can set the Rpath in Rinit(Rlibraries,Rpath). /n Is your R library path "' OPENR.myLibPaths '"correct? You can set it in Rinit(Rlibraries,Rpath,Rlibpaths).']))
+    else
+        error(sprintf(['Is your R path "' OPENR.Rexe '" correct? You can set the Rpath in Rinit(Rlibraries,Rpath). /n Is the R library path correct? You can set it in Rinit(Rlibraries,Rpath,Rlibpaths).']))
+    end
 end
 try
     dat = load('Rpull.mat');

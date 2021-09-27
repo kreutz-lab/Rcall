@@ -17,6 +17,7 @@ Rrun('dev.off()')
 [fitM, p] = Rpull('fit','p');
 
 % 2nd example: Cluster analysis
+Rrun('options(bitmapType="cairo")')
 Rrun('tiff("ClusterArrhythmia.tiff")')
 Rrun('h <- heatmap(dat,row=NA)')
 Rrun('cl <- h$colInd')
