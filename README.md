@@ -33,7 +33,10 @@ For explanation of the input variables, the Rcall implementation and more applic
 
 ## Author
 Clemens Kreutz and Janine Egert
+
 Institute of Medical Biometry and Statistics, 
 Faculty of Medicine and Medical Center – University of Freiburg, Germany
+
 https://www.uniklinik-freiburg.de/imbi-en/msb.html
+ckreutz at imbi.uni-freiburg.de
 egert at imbi.uni-freiburg.de
