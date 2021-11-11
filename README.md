@@ -30,3 +30,10 @@ Rclear
 ```
 
 For explanation of the input variables, the Rcall implementation and more application examples, see the [Rcall wiki](https://github.com/kreutz-lab/Rcall/wiki).
+
+## Author
+Clemens Kreutz and Janine Egert
+Institute of Medical Biometry and Statistics, 
+Faculty of Medicine and Medical Center – University of Freiburg, Germany
+https://www.uniklinik-freiburg.de/imbi-en/msb.html
+egert at imbi.uni-freiburg.de
