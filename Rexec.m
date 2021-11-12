@@ -32,7 +32,7 @@ if isfield(OPENR,'cmd')
         fprintf(fid,'  })\n');   
         fprintf(fid,' },error=function(e) {\n');
         fprintf(fid,'  sink("Rerrorinstalltmp.txt")\n');
-        fprintf(fid,'  cat("Error in Rrun.R : Installation of package %s was not successfull. Try package installation in R beforehand.", conditionMessage(e))\n',OPENR.libraries{i});
+        fprintf(fid,'  cat("Error in Rrun.R : Installation of package %s was not successfull. Try package installation in R beforehand. If your package has been installed, check if the R version and the R libraries are set in the system environmental variables. ", conditionMessage(e))\n',OPENR.libraries{i});
         fprintf(fid,'  sink()\n');
         fprintf(fid,'})})\n');        
     end

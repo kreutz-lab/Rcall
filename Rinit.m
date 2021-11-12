@@ -46,6 +46,14 @@ else
 end
 if ~isfield(OPENR,'Rexe') || isempty(OPENR.Rexe)
     error('Rcall/Rinit.m: Define your home directory of R in Rinit(Rlibraries,Rpath). You can find the directory by R.home() in R.')
+else
+    [status,cmdout] = system(sprintf('"%s" --version',OPENR.Rexe));
+    if status~=0
+        error([cmdout OPENR.Rexe newline 'Check if the R path is correct and if the R path is set in the environmental variables.'])
+    else
+        cmdout = split(cmdout,char(10));
+        cmdout{1}
+    end
 end
 % Check existence of R path, if calling "R" on clusters, it's not a path
 % if ~exist(OPENR.Rexe,'file') % 'dir'?
