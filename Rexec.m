@@ -54,7 +54,7 @@ if isfield(OPENR,'cmd')
     %fprintf(fid,'rm(i)\n');
     
     fprintf(fid,'\n###  cmds  ###\n');    
-    if any(contains(OPENR.cmd,'foreach'))
+    if any(~cellfun(@isempty,strfind(OPENR.cmd,'pdf')))
         fprintf(fid,'%s\n','tryCatch( { require(doParallel) },');
         fprintf(fid,'%s\n','warning=function(c) {install.packages("doParallel")');
         fprintf(fid,'%s\n','require(doParallel) })');

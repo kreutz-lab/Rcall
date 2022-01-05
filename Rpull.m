@@ -30,6 +30,11 @@ fprintf(fid,'rm(list=ls())\n');
 fprintf(fid,'\n');
 
 fprintf(fid,'%s\n','load("Rrun.Rdata")');
+
+% do variables exist?
+for i=1:nargin
+    fprintf(fid,'%s\n',sprintf('if (!exists("%s") && !file.exists("Rerrortmp.R")) { writeLines(paste("Variable ''%s'' does not exist. Check your variable definition or the Run.R function.",sep=""),"Rerrortmp.txt")}',varargin{i},varargin{i}));
+end
 fprintf(fid,'%s\n','expr <- ''writeMat("Rpull.mat"''');
 
 UnlistArg(fid)
@@ -45,6 +50,9 @@ fclose(fid);
 
 [status,cmdout] = system(sprintf('"%s" CMD BATCH --slave "%s%sRpull.R"',OPENR.Rexe,pwd,filesep));
 
+if exist('Rerrortmp.txt','file')
+     error(fileread([pwd filesep 'Rerrortmp.txt']))
+end
 if ~isempty(cmdout)
     if contains(cmdout,'system cannot find the path specified')
         error([cmdout ' Is your R path ' OPENR.Rexe ' defined in the PATH environmental variable? Alternatively, set your R path in the Rinit(Rpackages,Rpath) function as second input argument.'])
@@ -97,15 +105,20 @@ for i=1:length(varargin)
 %             varargout{i} = struct2table(temp);
         else %if isfield(dat,[varargin{i} '_vartype']) && strcmp(dat.([varargin{i} '_vartype']),'list') && ~isempty(sf) 
             fn = fieldnames(dat);
-            sfields = fn(contains(fn,varargin{i}) & contains(fn,'_subfields'));
+            sfields = fn(~cellfun(@isempty,strfind(fn,varargin{i})) & ~cellfun(@isempty,strfind(fn,'_subfields')) );
+            %sfields = fn(contains(fn,varargin{i}) & contains(fn,'_subfields'));
             for k=length(sfields):-1:1
                 sf = strsplit(dat.(sfields{k}),',');
                 for s = length(sf):-1:1
-                    eval(sprintf('dat.%s = dat.(sf{s});',replace(sf{s},'_struct_','.')));
+                    eval(sprintf('dat.%s = dat.(sf{s});',strrep(sf{s},'_struct_','.')));
                 end
             end
-            if isfield(dat,[varargin{i} '_vartype']) && contains(dat.([varargin{i} '_vartype']),'tbl')
-                varargout{i} = struct2table(dat.(varargin{i}),'AsArray',true);
+            if isfield(dat,[varargin{i} '_vartype']) && ~isempty(strfind(dat.([varargin{i} '_vartype']),'tbl'))
+              try
+                varargout{i} = struct2table(dat.(varargin{i}),'AsArray',true); % In Octave, the data type 'table' is not available
+              catch
+                varargout{i} = dat.(varargin{i});
+              end
             else
                 varargout{i} = dat.(varargin{i});
             end
@@ -129,26 +142,29 @@ fprintf(fid,'%s\n','    } else { ');
 fprintf(fid,'%s\n','      # Initialize');
 fprintf(fid,'%s\n','      expr <- NULL');
 fprintf(fid,'%s\n','      sf <- NULL');
-fprintf(fid,'%s\n','      if (!grepl("\\$",argname)) {');
-fprintf(fid,'%s\n','        arg <- drop(arg)');
-fprintf(fid,'%s\n','        expr <- paste('','',argname,''_vartype="'',class(arg)[1],''"'',sep="")');
-fprintf(fid,'%s\n','        expr <- paste(expr,'','',argname,''_dim="'',toString(dim(arg)),''"'',sep="") }');
 fprintf(fid,'%s\n','      # Get names for subfields');
 fprintf(fid,'%s\n','      if (is.null(names(arg))) {');
 fprintf(fid,'%s\n','        if (!is.null(rownames(arg)) & length(rownames(arg))==length(arg)) { varnames <- rownames(arg)');
 fprintf(fid,'%s\n','        } else { varnames <- paste0("sub",seq(1:length(arg))) }');
 fprintf(fid,'%s\n','      } else { varnames <- names(arg) }');
+fprintf(fid,'%s\n','      varnames <- gsub(" ","_",varnames)');
+fprintf(fid,'%s\n','      if (!grepl("\\$",argname)) {');
+fprintf(fid,'%s\n','        arg <- drop(arg)');
+fprintf(fid,'%s\n','        expr <- paste('','',argname,''_vartype="'',class(arg)[1],''"'',sep="")');
+fprintf(fid,'%s\n','        expr <- paste(expr,'','',argname,''_dim="'',toString(dim(arg)),''"'',sep="") }');
 fprintf(fid,'%s\n','        ii <- 0');
 fprintf(fid,'%s\n','        for (i in 1:length(arg)) {');
-fprintf(fid,'%s\n','          if (is.list(arg[[i-ii]])) {');
-fprintf(fid,'%s\n','            if (length(arg[[i-ii]])<2) { arg <- unlist(arg);break } else {');
+fprintf(fid,'%s\n','          if (varnames[i-ii]=="") {varnames[i-ii] <- paste("X",i-ii,sep="")}');
+fprintf(fid,'%s\n','          if (is.list(arg[[i-ii]]) || is.factor(arg[[i-ii]])) {');
+fprintf(fid,'%s\n','            if (length(arg[[i-ii]])<2 || is.factor(arg[[i-ii]])) { arg <- unlist(arg);break } else {');
 fprintf(fid,'%s\n','              re<- UnlistArg(arg[[i-ii]],paste(argname,''$'',varnames[i-ii],sep=""))');
 fprintf(fid,'%s\n','              if (is.list(arg[[i-ii]])) {');
 fprintf(fid,'%s\n','                arg[[i-ii]] <- re[[1]]');
 fprintf(fid,'%s\n','                expr <- paste(expr,re[[2]]) ');
 fprintf(fid,'%s\n','                sf <- c(sf,gsub("\\.","_",gsub("\\$","_struct_",paste(argname,"_struct_",varnames[i-ii],sep=""))))');
 fprintf(fid,'%s\n','              }');
-fprintf(fid,'%s\n','          } } else if (is.null(arg[[i-ii]])) { arg[[i-ii]] <- NULL');
+fprintf(fid,'%s\n','            } } else if (is.call(arg[[i-ii]])) { arg[[i-ii]] <- str(arg[[i-ii]])');
+fprintf(fid,'%s\n','              } else if (is.null(arg[[i-ii]])) { arg[[i-ii]] <- NULL');
 fprintf(fid,'%s\n','          varnames <- names(arg) ');
 fprintf(fid,'%s\n','          ii <- ii+1');
 fprintf(fid,'%s\n','          } else { sf <- c(sf,gsub("\\.","_",gsub("\\$","_struct_",paste(argname,"_struct_",varnames[i-ii],sep="")))) ');

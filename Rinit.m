@@ -41,7 +41,7 @@ else
         % Searches in standard windows/linux/cluster paths
         OPENR.Rexe = Rload;
     end
-    OPENR.Rexe = sort(split(OPENR.Rexe,char(10)));
+    OPENR.Rexe = sort(strsplit(OPENR.Rexe));
     OPENR.Rexe = OPENR.Rexe{end};
 end
 if ~isfield(OPENR,'Rexe') || isempty(OPENR.Rexe)
@@ -49,9 +49,10 @@ if ~isfield(OPENR,'Rexe') || isempty(OPENR.Rexe)
 else
     [status,cmdout] = system(sprintf('"%s" --version',OPENR.Rexe));
     if status~=0
-        error([cmdout OPENR.Rexe newline 'Check if the R path is correct and if the R path is set in the environmental variables.'])
+        error(['Check if the Rpath "' OPENR.Rexe '" is correct and if the R path is set in the environmental variables. ' cmdout])
+%        error([cmdout OPENR.Rexe newline 'Check if the R path is correct and if the R path is set in the environmental variables.'])
     else
-        cmdout = split(cmdout,char(10));
+        cmdout = strsplit(cmdout,char(10));
         cmdout{1}
     end
 end
@@ -88,8 +89,8 @@ if exist('libraries','var') && ~isempty(libraries)
 end
 
 %% create empty workspaces
-save Rpush
-
+save('Rpush.mat','OPENR','-v7'); % version >=7.3 not supported by R.matlab package
+                                 % version <7 do not support structs
 warning('off','MATLAB:DELETE:FileNotFound');
 delete('Rpull.mat')
 warning('on','MATLAB:DELETE:FileNotFound');
