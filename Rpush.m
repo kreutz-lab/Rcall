@@ -92,7 +92,9 @@ for i=1:2:nargin
     %% Push
     ftmp = @(x)x;
     evstr = sprintf('%s = feval(ftmp,val);',valname);   
-    evstr2 = sprintf('save(''Rpush.mat'',''%s'',''-append'',''-v7'');',valname); % version has to be specified for Octave use
+    evstr2 = sprintf('save(''Rpush.mat'',''%s'',''-append'',''-v7'');',valname);
     eval(evstr);
+    warning('off','MATLAB:save:versionWithAppend');  % version has to be specified for Octave use
     eval(evstr2);
+    warning('on','MATLAB:save:versionWithAppend');
 end
