@@ -7,6 +7,8 @@ and forwarding the results to MATLAB for further use. The evaluation and convers
 types in R and MATLAB are provided. Due to the easy embedding of R facilities, Rcall greatly extends the
 functionality of the MATLAB programming language.
 
+Rcall is implemented in MATLAB and Octave and runs on Linux, Windows and macOS.
+
 ## Installation
 [![View Rcall on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://de.mathworks.com/matlabcentral/fileexchange/104945-rcall)
 
