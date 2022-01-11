@@ -8,7 +8,10 @@ types in R and MATLAB are provided. Due to the easy embedding of R facilities, R
 functionality of the MATLAB programming language.
 
 ## Installation
-1) Rcall is installed by cloning or downloading the 'Rcall' git repository, e.g. by
+1) [![View Rcall on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://de.mathworks.com/matlabcentral/fileexchange/104945-rcall)
+
+OR
+2) Clone the 'Rcall' git repository, e.g. by
 ```
 git clone https://github.com/kreutz-lab/Rcall.git
 ```
@@ -16,7 +19,7 @@ or
 ```
 github install kreutz-lab/Rcall
 ```
-2) Add the repository file path to your Matlab search path by addpath.m or by Home -> Set Path -> Add Folder.
+Then, add the repository file path to your Matlab search path by addpath.m or by Home -> Set Path -> Add Folder.
 
 ## Short Example
 To demonstrate the easy use of Rcall, here is a small example. First, Rcall is initialized by defining the R path, R libraries and the R libraries path. The variables are passed to R by the 'Rpush' command. R commands are defined by the 'Rrun' command. Within the 'Rpull' command the R code is executed and the defined variables are load in the Matlab workspace. For error prouning, make sure the R packages are properly installed or installed beforehand.
