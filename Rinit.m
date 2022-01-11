@@ -16,11 +16,38 @@
 %   Rrun('dat <- c(5,5,5)')
 %   dat = Rpull('dat');
 %   Rclear
+%
+% Rcall: An R interface for MATLAB.
+% Copyright (C) 2022, Janine Egert and Clemens Kreutz
+% All rights reserved.
+%
+% Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+% 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+% 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+% 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+%
+% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+% IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+% HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+%
+% egert@imbi.uni-freiburg.de and ckreutz@imbi.uni-freiburg.de
+% Institut für Medizinische Biometrie und Statistik
+% Universitätsklinikum Freiburg
+% Stefan-Meier-Str. 26
+% 79104 Freiburg
+
+
 
 function Rinit(libraries,path,libpath)
 
 global OPENR
 OPENR = struct;
+
+%% Copyright information
+fprintf('Rcall: An R interface for MATLAB. \nCopyright (C) 2022 Janine Egert and Clemens Kreutz.\n')
+fprintf('THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES ARE DISCLAIMED; for details see "LICENSE".\n')
+fprintf('Redistribution and use in source and binary forms, with or without modification, are permitted provided certain conditions; for details see "LICENSE".\n')
+%fprintf('Website & bug report: https://github.com/kreutz-lab/Rcall')
 
 %% Set R path
 if exist('path','var') && ~isempty(path)
@@ -53,7 +80,7 @@ else
 %        error([cmdout OPENR.Rexe newline 'Check if the R path is correct and if the R path is set in the environmental variables.'])
     else
         cmdout = strsplit(cmdout,char(10));
-        cmdout{1}
+        Rversion = cmdout{1}
     end
 end
 % Check existence of R path, if calling "R" on clusters, it's not a path

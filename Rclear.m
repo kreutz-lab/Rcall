@@ -1,6 +1,10 @@
 % Rclear
 %
 % All temporary variables and files which were created by Rcall are deleted
+%
+% Rcall: An R interface for MATLAB.
+% Copyright (C) 2022, Janine Egert and Clemens Kreutz
+% see LICENSE for more details
 
 function Rclear
 warning('off','MATLAB:DELETE:FileNotFound');

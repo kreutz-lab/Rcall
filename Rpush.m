@@ -13,6 +13,10 @@
 %   Rrun('dat <- dat+1')
 %   dat = Rpull('dat')
 %   Rclear
+%
+% Rcall: An R interface for MATLAB.
+% Copyright (C) 2022, Janine Egert and Clemens Kreutz
+% see LICENSE for more details
 
 function Rpush(varargin)
 global OPENR

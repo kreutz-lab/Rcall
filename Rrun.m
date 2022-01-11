@@ -6,6 +6,10 @@
 % 
 %   This function requires the R.matlab package that has to be installed in R
 %   e.g. via install.packages("R.matlab")
+%
+% Rcall: An R interface for MATLAB.
+% Copyright (C) 2022, Janine Egert and Clemens Kreutz
+% see LICENSE for more details
 
 function Rrun(cmd)
 

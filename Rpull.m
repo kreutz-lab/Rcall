@@ -12,6 +12,10 @@
 % 
 %   This function requires the R.matlab package that has to be installed in
 %   R (e.g. via install.packages("R.matlab")
+%
+% Rcall: An R interface for MATLAB.
+% Copyright (C) 2022, Janine Egert and Clemens Kreutz
+% see LICENSE for more details
 
 function varargout = Rpull(varargin)
 global OPENR
@@ -33,7 +37,7 @@ fprintf(fid,'%s\n','load("Rrun.Rdata")');
 
 % do variables exist?
 for i=1:nargin
-    fprintf(fid,'%s\n',sprintf('if (!exists("%s") && !file.exists("Rerrortmp.R")) { writeLines(paste("Variable ''%s'' does not exist. Check your variable definition or the Run.R function.",sep=""),"Rerrortmp.txt")}',varargin{i},varargin{i}));
+    fprintf(fid,'%s\n',sprintf('if (!exists("%s") && !file.exists("Rerrortmp.R")) { writeLines(paste("Variable ''%s'' does not exist. Check your variable definition or the Rrun.R function.",sep=""),"Rerrortmp.txt")}',varargin{i},varargin{i}));
 end
 fprintf(fid,'%s\n','expr <- ''writeMat("Rpull.mat"''');
 

@@ -6,6 +6,10 @@
 % 
 %   The reason for buffering is that it is faster to execute serveral R
 %   commands together.
+%
+% Rcall: An R interface for MATLAB.
+% Copyright (C) 2022, Janine Egert and Clemens Kreutz
+% see LICENSE for more details
 
 function Rexec
 global OPENR
