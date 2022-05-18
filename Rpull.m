@@ -65,7 +65,7 @@ if ~isempty(cmdout)
 end
 if status~=0
     if isfield(OPENR,'myLibPath')
-        error(sprintf(['Is your R path "' OPENR.Rexe '" correct? You can set the Rpath in Rinit(Rlibraries,Rpath). /n Is your R library path "' OPENR.myLibPaths '"correct? You can set it in Rinit(Rlibraries,Rpath,Rlibpaths).']))
+        error(sprintf(['Is your R path "' OPENR.Rexe '" correct? You can set the Rpath in Rinit(Rlibraries,Rpath). /n Is your R library path "' OPENR.myLibPath '"correct? You can set it in Rinit(Rlibraries,Rpath,Rlibpaths).']))
     else
         error(sprintf(['Is your R path "' OPENR.Rexe '" correct? You can set the Rpath in Rinit(Rlibraries,Rpath). /n Is the R library path correct? You can set it in Rinit(Rlibraries,Rpath,Rlibpaths).']))
     end
