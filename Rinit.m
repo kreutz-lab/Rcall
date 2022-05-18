@@ -68,15 +68,17 @@ else
         % Searches in standard windows/linux/cluster paths
         OPENR.Rexe = Rload;
     end
-    OPENR.Rexe = sort(strsplit(OPENR.Rexe));
-    OPENR.Rexe = OPENR.Rexe{end};
+    OPENR.Rexe = strtrim(OPENR.Rexe);
+%     OPENR.Rexe = sort(strsplit(OPENR.Rexe));
+%     OPENR.Rexe = OPENR.Rexe{end};
 end
 if ~isfield(OPENR,'Rexe') || isempty(OPENR.Rexe)
     error('Rcall/Rinit.m: Define your home directory of R in Rinit(Rlibraries,Rpath). You can find the directory by R.home() in R.')
 else
-    [status,cmdout] = system(sprintf('"%s" --version',OPENR.Rexe));
+    cmd = sprintf('"%s" --version',OPENR.Rexe);
+    [status,cmdout] = system(cmd);
     if status~=0
-        error(['Check if the Rpath "' OPENR.Rexe '" is correct and if the R path is set in the environmental variables. ' cmdout])
+        error('%s fails. Can be checked from command line. \nIs the Rpath "%s" correct? \nIs R path is set as environmental variable? \n%s',cmd, OPENR.Rexe, cmdout)
 %        error([cmdout OPENR.Rexe newline 'Check if the R path is correct and if the R path is set in the environmental variables.'])
     else
         cmdout = strsplit(cmdout,char(10));

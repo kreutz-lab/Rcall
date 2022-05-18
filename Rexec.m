@@ -86,15 +86,15 @@ if isfield(OPENR,'cmd')
     
     if ~isempty(cmdout)
         if contains(cmdout,'system cannot find the path specified')
-            error([cmdout ' Is your R path ' OPENR.Rexe ' defined in the PATH environmental variable? Alternatively, set your R path in the Rinit(Rpackages,Rpath) function as second input argument.'])
+            error([cmdout ' Is your R path ' OPENR.Rexe ' defined in the PATH environmental variable? \nAlternatively, set your R path in the Rinit(Rpackages,Rpath) function as second input argument.'])
         end
         error(cmdout)
     end
     if status~=0
         if isfield(OPENR,'myLibPath')
-            error(sprintf(['Is your R path "' OPENR.Rexe '" correct? You can set the Rpath in Rinit(Rlibraries,Rpath). /n Is your R library path "' OPENR.myLibPath '"correct? You can set it in Rinit(Rlibraries,Rpath,Rlibpaths).']))
+            error('The following command fails: %s. Can be checked from command line. \nIs your R path "%s" correct? You can set the Rpath via Rinit(Rlibraries,Rpath). \n Is your R library path "%s"correct? You can set it via Rinit(Rlibraries,Rpath,Rlibpaths).',cmd,OPENR.Rexe,OPENR.myLibPath)
         else
-            error(sprintf(['Is your R path "' OPENR.Rexe '" correct? You can set the Rpath in Rinit(Rlibraries,Rpath). /n Is the R library path correct? You can set it in Rinit(Rlibraries,Rpath,Rlibpaths).']))
+            error('The following command fails: %s. Can can be checked from command line. \nIs your R path "%s" correct? You can set the Rpath via Rinit(Rlibraries,Rpath). \n Is the R library path correct? You can set it via Rinit(Rlibraries,Rpath).',cmd,OPENR.Rexe)
         end
     end
     
