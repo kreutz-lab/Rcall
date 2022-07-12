@@ -84,17 +84,17 @@ if isfield(OPENR,'cmd')
     cmd = sprintf('"%s" CMD BATCH --slave "%s%sRrun.R"',OPENR.Rexe,pwd,filesep);
     [status,cmdout] = system(cmd);
     
-    if ~isempty(cmdout)
-        if contains(cmdout,'system cannot find the path specified')
-            error([cmdout ' Is your R path ' OPENR.Rexe ' defined in the PATH environmental variable? \nAlternatively, set your R path in the Rinit(Rpackages,Rpath) function as second input argument.'])
-        end
-        error(cmdout)
-    end
+%     if ~isempty(cmdout)
+%         if contains(cmdout,'system cannot find the path specified')
+%             error([cmdout ' Is your R path ' OPENR.Rexe ' defined in the PATH environmental variable? \nAlternatively, set your R path in the Rinit(Rpackages,Rpath) function as second input argument.'])
+%         end
+%         error(cmdout)
+%     end
     if status~=0
         if isfield(OPENR,'myLibPath')
-            error('The following command fails: %s. Can be checked from command line. \nIs your R path "%s" correct? You can set the Rpath via Rinit(Rlibraries,Rpath). \n Is your R library path "%s"correct? You can set it via Rinit(Rlibraries,Rpath,Rlibpaths).',cmd,OPENR.Rexe,OPENR.myLibPath)
+            error('%s.\n The following command fails: %s.\n Try the following: Can the command be executed from command line? \nIs your R path "%s" correct? Could empty spaces, backslashes etc cause the error?\n Is your R executable set in your system environmental variable?\n To be sure and/or to load another R version, you can set the Rpath via Rinit(Rlibraries,Rpath). \n Is your R library path "%s"correct? You can set it via Rinit(Rlibraries,Rpath,Rlibpaths).',cmdout,cmd,OPENR.Rexe,OPENR.myLibPath)
         else
-            error('The following command fails: %s. Can can be checked from command line. \nIs your R path "%s" correct? You can set the Rpath via Rinit(Rlibraries,Rpath). \n Is the R library path correct? You can set it via Rinit(Rlibraries,Rpath).',cmd,OPENR.Rexe)
+            error('%s.\n The following command fails: %s.\n Try the following: Can the command be executed from command line? \nIs your R path "%s" correct? Could empty spaces, backslashes etc cause the error?\n Is your R executable set in your system environmental variable?\n To be sure and/or to load another R version, you can set the Rpath via Rinit(Rlibraries,Rpath). \n',cmdout,cmd,OPENR.Rexe)
         end
     end
     
