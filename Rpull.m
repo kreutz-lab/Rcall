@@ -80,26 +80,31 @@ varargout = {};
 for i=1:length(varargin)
     if isfield(dat,[varargin{i} '_subfields']) && ~isempty(dat.([varargin{i} '_subfields']))
         sf = strsplit(dat.([varargin{i} '_subfields']),',');
-        %% Array to array
-        if isfield(dat,[varargin{i} '_vartype']) && (strcmp(dat.([varargin{i} '_vartype']),'array') || strcmp(dat.([varargin{i} '_vartype']),'matrix'))
-            dim = str2num(dat.([varargin{i} '_dim']));
-                if length(dim)==1
-                    row = ind2sub(dim,1:length(sf));
-                    col = ones(length(row),1); page = ones(length(row),1);
-                    varargout{i} = cell(dim(1));
-                elseif length(dim)==2
-                    [row,col] = ind2sub(dim,1:length(sf));
-                    varargout{i} = cell(dim(1),dim(2));
-                    page = ones(length(row),1);
-                elseif length(dim)==3
-                    [row,col,page] = ind2sub(dim,1:length(sf));
-                    varargout{i} = cell(dim(1),dim(2),dim(3));
-                else
-                    warning('No more than 4D arrays supported.')
-                end
-                for j=1:length(row)
-                    varargout{i}{row(j),col(j),page(j)} = dat.(sf{j});
-                end
+    else sf=[];
+    end
+    %% Array to array
+    if isfield(dat,[varargin{i} '_vartype']) && (strcmp(dat.([varargin{i} '_vartype']),'array') || strcmp(dat.([varargin{i} '_vartype']),'matrix'))
+        dim = str2num(dat.([varargin{i} '_dim']));
+        if length(dim)==1
+            row = ind2sub(dim,1:length(sf));
+            col = ones(length(row),1); page = ones(length(row),1);
+            varargout{i} = cell(dim(1));
+        elseif length(dim)==2
+            [row,col] = ind2sub(dim,1:length(sf));
+            varargout{i} = cell(dim(1),dim(2));
+            page = ones(length(row),1);
+        elseif length(dim)==3
+            [row,col,page] = ind2sub(dim,1:length(sf));
+            varargout{i} = cell(dim(1),dim(2),dim(3));
+        else
+            warning('No more than 4D arrays supported.')
+        end
+        for j=1:length(row)
+            varargout{i}{row(j),col(j),page(j)} = dat.(sf{j});
+        end
+    elseif isfield(dat,[varargin{i} '_vartype']) && (strcmp(dat.([varargin{i} '_vartype']),'factor'))
+        varargout{i} = categorical(dat.(varargin{i})); %factor -> categorical
+
         %% List to struct
 %         elseif isfield(dat,[varargin{i} '_vartype']) && strcmp(dat.([varargin{i} '_vartype']),'data.frame')
 %             temp = dat.(sf{1});
@@ -107,29 +112,25 @@ for i=1:length(varargin)
 %                 temp = [temp dat.(sf{j})];
 %             end
 %             varargout{i} = struct2table(temp);
-        else %if isfield(dat,[varargin{i} '_vartype']) && strcmp(dat.([varargin{i} '_vartype']),'list') && ~isempty(sf) 
-            fn = fieldnames(dat);
-            sfields = fn(~cellfun(@isempty,strfind(fn,varargin{i})) & ~cellfun(@isempty,strfind(fn,'_subfields')) );
-            %sfields = fn(contains(fn,varargin{i}) & contains(fn,'_subfields'));
-            for k=length(sfields):-1:1
-                sf = strsplit(dat.(sfields{k}),',');
-                for s = length(sf):-1:1
-                    eval(sprintf('dat.%s = dat.(sf{s});',strrep(sf{s},'_struct_','.')));
-                end
-            end
-            if isfield(dat,[varargin{i} '_vartype']) && ~isempty(strfind(dat.([varargin{i} '_vartype']),'tbl'))
-              try
-                varargout{i} = struct2table(dat.(varargin{i}),'AsArray',true); % In Octave, the data type 'table' is not available
-              catch
-                varargout{i} = dat.(varargin{i});
-              end
-            else
-                varargout{i} = dat.(varargin{i});
+    else %if isfield(dat,[varargin{i} '_vartype']) && strcmp(dat.([varargin{i} '_vartype']),'list') && ~isempty(sf) 
+        fn = fieldnames(dat);
+        %sfields = fn(~cellfun(@isempty,strfind(fn,varargin{i})) & ~cellfun(@isempty,strfind(fn,'_subfields')) );
+        sfields = fn(contains(fn,varargin{i}) & contains(fn,'_subfields'));
+        for k=length(sfields):-1:1
+            sf = strsplit(dat.(sfields{k}),',');
+            for s = length(sf):-1:1
+                eval(sprintf('dat.%s = dat.(sf{s});',strrep(sf{s},'_struct_','.')));
             end
         end
-    %% Take as is
-    else
-        varargout{i} = dat.(varargin{i});
+        if isfield(dat,[varargin{i} '_vartype']) && contains(dat.([varargin{i} '_vartype']),'tbl')
+         % try
+         %   varargout{i} = struct2table(dat.(varargin{i}),'AsArray',true); % In Octave, the data type 'table' is not available
+         % catch
+            varargout{i} = dat.(varargin{i});
+         % end
+        else
+            varargout{i} = dat.(varargin{i});
+        end
     end
 end
 
@@ -139,13 +140,16 @@ function UnlistArg(fid)
 
 fprintf(fid,'%s\n','UnlistArg <- function(arg,argname) { ');
 fprintf(fid,'%s\n','if (exists("arg")) { ');
-fprintf(fid,'%s\n','    # if not list, keep as is');
+fprintf(fid,'%s\n','    # Initialize');
+fprintf(fid,'%s\n','    expr <- NULL');
+fprintf(fid,'%s\n','    sf <- NULL');
 fprintf(fid,'%s\n','    if (!is.list(arg)) { ');
-fprintf(fid,'%s\n','      expr <- paste('','',gsub("\\$","_struct_",argname),''='',gsub("\\$sub([0-9])","[[\\1]]",argname)) ');
+fprintf(fid,'%s\n','      if (is.call(arg) || is.factor(arg)) {');
+fprintf(fid,'%s\n','         expr <- paste('','',argname,''_vartype="'',class(arg)[1],''"'',sep="")');
+fprintf(fid,'%s\n','         arg <- as.character(arg) }');
+fprintf(fid,'%s\n','      expr <- paste(expr,'','',gsub("\\$","_struct_",argname),''='',gsub("\\$sub([0-9])","[[\\1]]",argname)) ');
 fprintf(fid,'%s\n','    } else { ');
-fprintf(fid,'%s\n','      # Initialize');
-fprintf(fid,'%s\n','      expr <- NULL');
-fprintf(fid,'%s\n','      sf <- NULL');
+
 fprintf(fid,'%s\n','      # Get names for subfields');
 fprintf(fid,'%s\n','      if (is.null(names(arg))) {');
 fprintf(fid,'%s\n','        if (!is.null(rownames(arg)) & length(rownames(arg))==length(arg)) { varnames <- rownames(arg)');
@@ -159,15 +163,15 @@ fprintf(fid,'%s\n','        expr <- paste(expr,'','',argname,''_dim="'',toString
 fprintf(fid,'%s\n','        ii <- 0');
 fprintf(fid,'%s\n','        for (i in 1:length(arg)) {');
 fprintf(fid,'%s\n','          if (varnames[i-ii]=="") {varnames[i-ii] <- paste("X",i-ii,sep="")}');
-fprintf(fid,'%s\n','          if (is.list(arg[[i-ii]]) || is.factor(arg[[i-ii]])) {');
-fprintf(fid,'%s\n','            if (length(arg[[i-ii]])<2 || is.factor(arg[[i-ii]])) { arg <- unlist(arg);break } else {');
+fprintf(fid,'%s\n','          if (is.list(arg[[i-ii]])) {');
+fprintf(fid,'%s\n','            if (length(arg[[i-ii]])<2) { arg <- unlist(arg);break } else {');
 fprintf(fid,'%s\n','              re<- UnlistArg(arg[[i-ii]],paste(argname,''$'',varnames[i-ii],sep=""))');
 fprintf(fid,'%s\n','              if (is.list(arg[[i-ii]])) {');
 fprintf(fid,'%s\n','                arg[[i-ii]] <- re[[1]]');
 fprintf(fid,'%s\n','                expr <- paste(expr,re[[2]]) ');
 fprintf(fid,'%s\n','                sf <- c(sf,gsub("\\.","_",gsub("\\$","_struct_",paste(argname,"_struct_",varnames[i-ii],sep=""))))');
 fprintf(fid,'%s\n','              }');
-fprintf(fid,'%s\n','            } } else if (is.call(arg[[i-ii]])) { arg[[i-ii]] <- str(arg[[i-ii]])');
+fprintf(fid,'%s\n','            } } else if (is.call(arg[[i-ii]]) || is.factor(arg[[i-ii]])) { arg[[i-ii]] <- as.character(arg[[i-ii]])');
 fprintf(fid,'%s\n','              } else if (is.null(arg[[i-ii]])) { arg[[i-ii]] <- NULL');
 fprintf(fid,'%s\n','          varnames <- names(arg) ');
 fprintf(fid,'%s\n','          ii <- ii+1');
