@@ -61,7 +61,7 @@ else
         [~,OPENR.Rexe]=system('which R');
     else
         [~,OPENR.Rexe]=system('where R.exe');
-        if strncmpi(OPENR.Rexe,'information',11)
+        if strncmpi(OPENR.Rexe,'info',11)
             warning('"R.exe" has not be found. Try adding the R path to the system environment variables.')
         end
 %         if ~strcmp(OPENR.Rexe(1),'"')
