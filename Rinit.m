@@ -51,7 +51,11 @@ fprintf('Redistribution and use in source and binary forms, with or without modi
 
 %% Set R path
 if exist('path','var') && ~isempty(path)
-    OPENR.Rexe = path;
+    if isstring(path)
+        OPENR.Rexe = char(path);
+    else
+        OPENR.Rexe = path;
+    end
 else
     if isunix || ismac
         [~,OPENR.Rexe]=system('which R');
@@ -114,6 +118,8 @@ if exist('libraries','var') && ~isempty(libraries)
     for i=1:length(libraries)
         if ischar(libraries{i})
             OPENR.libraries{end+1} = libraries{i};
+        elseif isstring(libraries{i})
+            OPENR.libraries{end+1} = char(libraries{i});
         else
             error('Rinit.m: Input argument has to be a string of the required R package')
         end
