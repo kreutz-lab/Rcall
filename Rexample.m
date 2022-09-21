@@ -1,3 +1,31 @@
+
+%% Example 1 - Linear Model
+
+Rinit
+
+% Pass test data to R
+load('hospital')
+tbl = table(hospital.Sex,hospital.BloodPressure(:,1),hospital.Age,hospital.Smoker, hospital.Weight, ...
+    'VariableNames',{'Sex','BloodPressure','Age','Smoker','Weight'});
+%tbl = table(dat(:,1),dat(:,4),'VariableNames',{'grp1','grp2'});
+Rpush('tbl',tbl)
+
+%% Matlab
+fit = fitlm(tbl,'BloodPressure~Age+Smoker+Weight');
+cm = fit.Coefficients.Estimate
+
+%% R
+Rrun('fit <- lm(BloodPressure~Age+Smoker+Weight, tbl)')       		%# fit linear model
+Rrun('cr <- fit$coefficients')											%# empirical Bayes statistics
+%Rrun('p <- fit$p.value')
+
+% Evaluate R commands and get variables
+cr = Rpull('cr')
+
+
+
+%% Example 2 - Linear Model with limma
+
 % Initialize Rcall
 Rinit('limma')
 
@@ -16,7 +44,8 @@ Rrun('dev.off()')
 % Evaluate R commands and get variables
 [fitM, p] = Rpull('fit','p');
 
-% 2nd example: Cluster analysis
+%% Example 2.2 - Cluster analysis
+
 Rrun('options(bitmapType="cairo")')
 Rrun('tiff("ClusterArrhythmia.tiff")')
 Rrun('h <- heatmap(dat,row=NA)')
