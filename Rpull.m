@@ -104,14 +104,17 @@ for i=1:length(varargin)
         end
     elseif isfield(dat,[varargin{i} '_vartype']) && (strcmp(dat.([varargin{i} '_vartype']),'factor'))
         varargout{i} = categorical(dat.(varargin{i})); %factor -> categorical
+    elseif isfield(dat,[varargin{i} '_vartype']) && (strcmp(dat.([varargin{i} '_vartype']),'logical'))
+        varargout{i} = logical(dat.(varargin{i})); %factor -> categorical
 
         %% List to struct
-%         elseif isfield(dat,[varargin{i} '_vartype']) && strcmp(dat.([varargin{i} '_vartype']),'data.frame')
+    elseif isfield(dat,[varargin{i} '_vartype']) && strcmp(dat.([varargin{i} '_vartype']),'data.frame')
 %             temp = dat.(sf{1});
 %             for j=2:length(sf)
 %                 temp = [temp dat.(sf{j})];
 %             end
 %             varargout{i} = struct2table(temp);
+        varargout{i} = struct2table(dat.(varargin{i}));
     else %if isfield(dat,[varargin{i} '_vartype']) && strcmp(dat.([varargin{i} '_vartype']),'list') && ~isempty(sf) 
         fn = fieldnames(dat);
         %sfields = fn(~cellfun(@isempty,strfind(fn,varargin{i})) & ~cellfun(@isempty,strfind(fn,'_subfields')) );
@@ -147,6 +150,8 @@ fprintf(fid,'%s\n','    if (!is.list(arg)) { ');
 fprintf(fid,'%s\n','      if (is.call(arg) || is.factor(arg)) {');
 fprintf(fid,'%s\n','         expr <- paste('','',argname,''_vartype="'',class(arg)[1],''"'',sep="")');
 fprintf(fid,'%s\n','         arg <- as.character(arg) }');
+fprintf(fid,'%s\n','      if (is.logical(arg)) {');
+fprintf(fid,'%s\n','         expr <- paste('','',argname,''_vartype="'',class(arg)[1],''"'',sep="")}');
 fprintf(fid,'%s\n','      expr <- paste(expr,'','',gsub("\\$","_struct_",argname),''='',gsub("\\$sub([0-9])","[[\\1]]",argname)) ');
 fprintf(fid,'%s\n','    } else { ');
 
