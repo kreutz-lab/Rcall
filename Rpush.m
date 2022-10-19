@@ -25,17 +25,29 @@ Rexec  % execute R commands if they are in the buffer
 
 OPENR.cmd = {};
 
+if length(varargin)==1 && iscell(varargin)
+    c=1;
+    newvarargin = cell(length(varargin{1}),1);
+    for ic = 1:length(varargin{1})
+        newvarargin{c} = varargin{1}{ic};
+        newvarargin{c+1} = evalin('base',varargin{1}{ic});
+        c=c+2;
+    end
+    varargin = newvarargin;
+    nargin = length(varargin);
+ end
+
 for i=1:2:nargin
     
     if nargin<2 % if only one input argument, take name of input variable
         val = varargin{i};
-        valname = inputname(varargin{i});
+        valname = inputname(varargin{i});        
     else        % else string is variable name, second argument is varialbe
         valname = varargin{i};
         val = varargin{i+1};
     end
     
-    if ~isa(val,'struct') && ~isa(val,'numeric') && ~isa(val,'char') && ~isa(val,'logical') && ~isa(val,'table') && ~isa(val,'cell') && ~isa(val,'dataset') && ~isa(val,'categorical')
+    if ~isa(val,'struct') && ~isa(val,'numeric') && ~isa(val,'string') && ~isa(val,'char') && ~isa(val,'logical') && ~isa(val,'table') && ~isa(val,'cell') && ~isa(val,'dataset') && ~isa(val,'categorical')
         warning(['Rcall/Rpush.m: Data type of variable ' valname ' unknown. May lead to problems converting to R.']);
     end
     if ~isa(valname,'char')
@@ -74,8 +86,11 @@ for i=1:2:nargin
     end
     if isa(val,'categorical')
         val = cellstr(val);
-        OPENR.cmd{end+1} = [valname ' <- factor(' valname ')']; % table -> data.frame (one can comment if list is prefered)
+        OPENR.cmd{end+1} = [valname ' <- factor(unlist(' valname '))'];
     end  
+    if isa(val,'logical')
+        OPENR.cmd{end+1} = [valname ' <- as.logical(' valname ')'];
+    end
     if isa(val,'time')
        val = char(val);
     end
