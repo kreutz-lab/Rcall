@@ -54,7 +54,7 @@ fclose(fid);
 
 [status,cmdout] = system(sprintf('"%s" CMD BATCH --slave "%s%sRpull.R"',OPENR.Rexe,pwd,filesep));
 
-if exist('Rerrortmp.txt','file')
+if exist([pwd 'Rerrortmp.txt'],'file')
      error(fileread([pwd filesep 'Rerrortmp.txt']))
 end
 if ~isempty(cmdout)

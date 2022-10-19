@@ -86,7 +86,7 @@ else
     cmd = sprintf('"%s" --version',OPENR.Rexe);
     [status,cmdout] = system(cmd);
     if status~=0
-        error('%s fails. Can be checked from command line. \nIs the Rpath "%s" correct? \nIs R path is set as environmental variable? \n%s',cmd, OPENR.Rexe, cmdout)
+        error('%s. Your system can not find the R installation. \nIs the Rpath "%s" correct? \nIs the R path set as environmental variable? \n It is also possible to set your Rpath as input variable by Rinit(Rlibraries, Rpath).\n%s',cmd, OPENR.Rexe, cmdout)
     else
         cmdout = strsplit(cmdout,char(10));
         Rversion = cmdout{1}
