@@ -70,6 +70,9 @@ else
         if ~isa(valname,'char')
             error('Rpush.m: Name-value pairs expected as input arguments.')
         end
+        if contains(valname,'_')
+            warning(['The R.matlab package transforms ' valname ' into ' strrep(valname,'_','.') '. Consider removing or replacing "_".'])
+        end
         
         %% Convert matlab variables to string/struct if necessary
         if isa(val,'string')
