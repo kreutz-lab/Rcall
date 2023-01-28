@@ -81,7 +81,7 @@ if isfield(OPENR,'cmd')
     fprintf(fid,'%s\n','sink() })');
     fclose(fid);
     
-    cmd = sprintf('%s CMD BATCH --slave "%s%sRrun.R"',OPENR.Rexe,pwd,filesep);
+    cmd = sprintf('"%s" CMD BATCH --slave "%s%sRrun.R"',OPENR.Rexe,pwd,filesep);
     [status,cmdout] = system(cmd);
     
 %     if ~isempty(cmdout)
