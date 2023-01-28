@@ -115,6 +115,9 @@ else
                 OPENR.cmd{end+1} = cmd;
             end
             continue
+        elseif isa(val,'double')
+        elseif isa(val,'float')
+        elseif isa(val,'single')
         else
             warning('Pushing %s is not yet supported by Rlink. Convert to other variable types and work with these in your R commands.',class(val))
         end
