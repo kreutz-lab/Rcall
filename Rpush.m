@@ -65,7 +65,7 @@ else
         end
         
         if ~isa(val,'struct') && ~isa(val,'numeric') && ~isa(val,'string') && ~isa(val,'char') && ~isa(val,'logical') && ~isa(val,'table') && ~isa(val,'cell') && ~isa(val,'dataset') && ~isa(val,'categorical')
-            warning(['Rcall/Rpush.m: Data type of variable ' valname ' unknown. May lead to problems converting to R.']);
+            warning(['Rcall/Rpush.m: Data type of variable ' valname ' not supported. May lead to problems converting to R.']);
         end
         if ~isa(valname,'char')
             error('Rpush.m: Name-value pairs expected as input arguments.')
@@ -77,16 +77,13 @@ else
         %% Convert matlab variables to string/struct if necessary
         if isa(val,'string')
             val = char(val);
-        end
-        if isa(val,'cell')
+        elseif isa(val,'cell')
             val = cell2struct(val,strcat('row',num2str((1:size(val,1))')),1);
-        end
-        if isa(val,'dataset')
+        elseif isa(val,'dataset')
             val = dataset2table(val);
             %val = dataset2struct(val);
             %OPENR.cmd{end+1} = [valname ' <- data.frame(' valname ')']; % table -> data.frame (one can comment if list is prefered)
-        end
-        if isa(val,'table')
+        elseif isa(val,'table')
             f = fieldnames(val);
             val = table2struct(val,'ToScalar',true);
             %fn = horzcat(strjoin(strcat('"',f(1:length(f)-3),'",')));
@@ -103,18 +100,14 @@ else
             %OPENR.cmd{end+1} = [valname ' <- data.frame(drop(' valname '))']; % table -> data.frame (one can comment if list is prefered, in R: list -> struct)
             %fn = horzcat(strjoin(strcat('"',fieldnames(val),'",')));
             %OPENR.cmd{end+1} = ['names(' valname ') <- c(' fn(1:end-1) ')'];
-        end
-        if isa(val,'categorical')
+        elseif isa(val,'categorical')
             val = cellstr(val);
             OPENR.cmd{end+1} = [valname ' <- factor(unlist(' valname '))'];
-        end
-        if isa(val,'logical')
+        elseif isa(val,'logical')
             OPENR.cmd{end+1} = [valname ' <- as.logical(' valname ')'];
-        end
-        if isa(val,'time')
+        elseif isa(val,'time')
             val = char(val);
-        end
-        if isa(val,'function_handle')
+        elseif isa(val,'function_handle')
             cmd = [varargin{i} '<- eval(expression(' replace(replace(func2str(val),'@','function'),'.','') '))'];
             if ~isfield(OPENR,'cmd')
                 OPENR.cmd = {cmd};
@@ -122,6 +115,8 @@ else
                 OPENR.cmd{end+1} = cmd;
             end
             continue
+        else
+            warning('Pushing %s is not yet supported by Rlink. Convert to other variable types and work with these in your R commands.',class(val))
         end
         
         %% Push
