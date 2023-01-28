@@ -1,6 +1,6 @@
-% function Rread(Rscript)
+% function Rrunfile(Rscript)
 %
-% Rread.m reads the file Rscript.R linewise
+% Rrunfile.m reads the file Rscript.R linewise
 % the R commands are saved and executed in the file in Rpull.m
 %
 % Rscript - location and name of a .R or .txt file consisting of R script
@@ -9,11 +9,11 @@
 % Rinit('limma')
 % load('pasilla_count_noMM.mat')
 % Rpush('dat',geneCountTable{:,3:6},'grp',[0;0;1;1])
-% Rread('Rapplication.R')
+% Rrunfile('Rapplication.R')
 % p = Rpull('p');
 % Rclear
 
-function Rread(Rscript)
+function Rrunfile(Rscript)
 
 if ~exist('Rscript','var') || ~exist(Rscript,'file')
     error(['Did not find ' Rscript '. Did you define the correct directory?'])
