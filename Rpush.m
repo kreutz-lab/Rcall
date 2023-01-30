@@ -67,6 +67,10 @@ else
             val = varargin{i+1};
         end
         
+        if contains(valname,'.')
+            error('Variable names with dot are not supported.')
+        end
+
         if ~isa(val,'struct') && ~isa(val,'numeric') && ~isa(val,'string') && ~isa(val,'char') && ~isa(val,'logical') && ~isa(val,'table') && ~isa(val,'cell') && ~isa(val,'dataset') && ~isa(val,'categorical')
             warning(['Rcall/Rpush.m: Data type of variable ' valname ' not supported. May lead to problems converting to R.']);
         end
