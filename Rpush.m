@@ -38,6 +38,9 @@ if nargin==0
             warning('Variable ''%s'' is greater than 1GB. It is not transferred to R.\n',valname{i});
             continue
         end
+        if contains(valname{i},'.')
+            error('Variable names with dot are not supported.')
+        end
         Rpush(valname{i},val);
     end
 else

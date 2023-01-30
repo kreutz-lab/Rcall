@@ -20,6 +20,12 @@
 function varargout = Rpull(varargin)
 global OPENR
 
+for i=1:length(varargin)
+    if contains(varargin{i},'.')
+        error('Variable names with dot are not supported.')
+    end
+end
+
 Rexec
 
 %% Schreibe *.Rdata in Rrun und konvertiere varname und speichere varname in Rpull.mat
