@@ -9,7 +9,7 @@
 % Rinit('limma')
 % load('pasilla_count_noMM.mat')
 % Rpush('dat',geneCountTable{:,3:6},'grp',[0;0;1;1])
-% Rrunfile('Rapplication.R')
+% Rrunfile('Rrunfile_example.R')
 % p = Rpull('p');
 % Rclear
 
