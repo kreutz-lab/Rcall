@@ -26,5 +26,5 @@ while ischar(tline)
     eval(['Rrun(''' tline ''')']);
     tline = fgetl(fid);
 end
-
+fclose(fid);
 
