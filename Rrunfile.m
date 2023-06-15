@@ -19,10 +19,12 @@ if ~exist('Rscript','var') || ~exist(Rscript,'file')
     error(['Did not find ' Rscript '. Did you define the correct directory?'])
 end
 
-filetext = fileread(Rscript);
-linetext = strsplit(filetext, '\n');
-linetext(cellfun('isempty', linetext)) = [];
-
-for i=1:length(linetext)
-    eval(['Rrun(''' linetext{i}(1:end-1) ''')']);
+fid = fopen(Rscript);
+tline = fgetl(fid);
+while ischar(tline)
+    disp(tline)
+    eval(['Rrun(''' tline ''')']);
+    tline = fgetl(fid);
 end
+
+
