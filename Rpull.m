@@ -1,4 +1,4 @@
-% val = Rpull(varname)
+% val = Rpull(varname, val)
 % 
 %   varname     name of an R variable which should be picked
 % 
@@ -70,6 +70,8 @@ if ~isempty(cmdout)
     error(cmdout)
 end
 if status~=0
+    disp('The following command did not return status=0 if executed via matlab''s system() command:')
+    fprintf('"%s" CMD BATCH --slave "%s%sRpull.R"',OPENR.Rexe,pwd,filesep);
     if isfield(OPENR,'myLibPath')
         error(['Is your R path "' OPENR.Rexe '" correct? You can set the Rpath in Rinit(Rlibraries,Rpath). Is your R library path "' OPENR.myLibPath '"correct? You can set it in Rinit(Rlibraries,Rpath,Rlibpaths).'])
     else

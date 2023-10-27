@@ -14,7 +14,7 @@
 function Rexec
 global OPENR
 
-if isfield(OPENR,'cmd')
+if isfield(OPENR,'cmd') && ~isempty(OPENR.cmd)
     fid = fopen('Rrun.R','w');
     fprintf(fid,'%s\n',['setwd("',strrep(pwd,filesep,'/'),'")']);
     fprintf(fid,'%s\n','tryCatch({');
@@ -101,9 +101,11 @@ if isfield(OPENR,'cmd')
     % show error messages in matlab command window
     if exist([pwd filesep 'Rerrorinstalltmp.txt'],'file')
         error(fileread([pwd filesep 'Rerrorinstalltmp.txt']))
+        delete([pwd filesep 'Rerrorinstalltmp.txt'])
     end
     if exist([pwd filesep 'Rerrortmp.txt'],'file')
         error(fileread([pwd filesep 'Rerrortmp.txt']))
+        delete([pwd filesep 'Rerrortmp.txt'])
     end
    
     OPENR = rmfield(OPENR,'cmd');

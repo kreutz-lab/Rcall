@@ -125,8 +125,9 @@ else
         elseif isa(val,'double')
         elseif isa(val,'float')
         elseif isa(val,'single')
+        elseif isa(val,'char')
         else
-            warning('Pushing %s is not yet supported by Rlink. Convert to other variable types and work with these in your R commands.',class(val))
+            warning('Pushing %s is not yet supported by Rcall. Convert to other variable types and work with these in your R commands.',class(val))
         end
         
         %% Push
