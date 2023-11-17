@@ -35,6 +35,13 @@ Rclear
 
 For explanation of the input variables, the Rcall implementation and more application examples, see the [Rcall wiki](https://github.com/kreutz-lab/Rcall/wiki).
 
+## Finding Errors
+Here, strategies are mentioned to find errors, i.e. to resolve problems occurring when trying to execute R commands from matlab.
+* Check whether all packages that you try to use are installed in R
+* Check local files: If Rcall does not terminate properly, files indicating the problem might be available in your working directory. Inspect them and/or try to execute them directly in R.
+* If you changed the .Rprofile file, this can cause problems when it cannot be executed when R is starting. However, if R runs properly, this is also not an issue for Rcall
+* Check the global variable RCALL in Matlab. This variable contains the code you execute.
+
 ## License
 
 BSD 3-Clause License
