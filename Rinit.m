@@ -40,6 +40,10 @@
 
 function Rinit(libraries,path,libpath)
 
+if exist('Rerrortmp.txt')==2
+    delete('Rerrortmp.txt'); % delete old error messages, otherwise an error is thrown later
+end
+
 global OPENR
 OPENR = struct;
 
