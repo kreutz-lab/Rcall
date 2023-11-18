@@ -85,7 +85,9 @@ else
         if isa(val,'string')
             val = char(val);
         elseif isa(val,'cell')
-            val = cell2struct(val,strcat('row',num2str((1:size(val,1))')),1);
+            nums = arrayfun(@num2str, 1:length(val), 'UniformOutput', false);
+            val = cell2struct(val,strcat('row',nums),2);
+%             val = cell2struct(val,strcat('row',num2str((1:size(val,1))')),1);
         elseif isa(val,'dataset')
             val = dataset2table(val);
             %val = dataset2struct(val);
